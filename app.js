@@ -1,11 +1,11 @@
 const express = require("express");
 const app = express();
-const { getCategories, catchAll } = require("./controllers/controller.js");
-
-app.use(express.json());
+const { getCategories } = require("./controllers/controller.js");
 
 app.get("/api/categories", getCategories);
 
-app.get("/*", catchAll);
+app.get("/*", (req, res) => {
+  res.status(404).send({ msg: "link not found" });
+});
 
 module.exports = app;

@@ -10,9 +10,9 @@ const {
   userData,
 } = require("../db/data/test-data/index");
 
-beforeEach(() => seed(categoryData, commentData, reviewData, userData));
+beforeEach(() => seed({ categoryData, commentData, reviewData, userData }));
 afterAll(() => {
-  if (db.end) db.end();
+  return db.end();
 });
 
 describe("GET /api/categories", () => {

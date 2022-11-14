@@ -6,8 +6,8 @@ const {
   formatComments,
 } = require("./utils");
 
-const seed = async (categoryData, commentData, reviewData, userData) => {
-  //const { categoryData, commentData, reviewData, userData } = data;
+const seed = async (data) => {
+  const { categoryData, commentData, reviewData, userData } = data;
   await db.query(`DROP TABLE IF EXISTS comments;`);
   await db.query(`DROP TABLE IF EXISTS reviews;`);
   await db.query(`DROP TABLE IF EXISTS users;`);

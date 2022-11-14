@@ -5,7 +5,3 @@ exports.getCategories = (req, res) => {
     res.send(categoryArray);
   });
 };
-
-exports.catchAll = (req, res) => {
-  res.status(404).send({ msg: "link not found" });
-};
