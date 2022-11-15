@@ -20,18 +20,3 @@ exports.formatComments = (comments, idLookup) => {
     };
   });
 };
-
-exports.addCommentCountToReviews = (reviewData, commentData) => {
-  if (!reviewData.length) {
-    return [];
-  }
-  const updatedReviews = reviewData.map((review) => {
-    const reviewCopy = { ...review };
-    reviewCopy.comment_count = 0;
-    return reviewCopy;
-  });
-  commentData.forEach(
-    (comment) => (updatedReviews[comment.review_id - 1].comment_count += 1)
-  );
-  return updatedReviews;
-};
