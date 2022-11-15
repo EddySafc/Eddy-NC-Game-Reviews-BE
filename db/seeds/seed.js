@@ -4,7 +4,6 @@ const {
   convertTimestampToDate,
   createRef,
   formatComments,
-  addCommentCountToReviews,
 } = require("./utils");
 
 const seed = async (data) => {
@@ -39,8 +38,7 @@ const seed = async (data) => {
     review_body VARCHAR NOT NULL,
     review_img_url VARCHAR DEFAULT 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
     created_at TIMESTAMP DEFAULT NOW(),
-    votes INT DEFAULT 0 NOT NULL,
-    comment_count INT
+    votes INT DEFAULT 0 NOT NULL
   );`);
 
   await db.query(`
@@ -77,14 +75,10 @@ const seed = async (data) => {
   await Promise.all([categoriesPromise, usersPromise]);
 
   const formattedReviewData = reviewData.map(convertTimestampToDate);
-  const commentCountAddedFormattedReviewData = addCommentCountToReviews(
-    formattedReviewData,
-    commentData
-  );
 
   const insertReviewsQueryStr = format(
-    "INSERT INTO reviews (title, category, designer, owner, review_body, review_img_url, created_at, votes, comment_count) VALUES %L RETURNING *;",
-    commentCountAddedFormattedReviewData.map(
+    "INSERT INTO reviews (title, category, designer, owner, review_body, review_img_url, created_at, votes) VALUES %L RETURNING *;",
+    formattedReviewData.map(
       ({
         title,
         category,
@@ -94,7 +88,6 @@ const seed = async (data) => {
         review_img_url,
         created_at,
         votes,
-        comment_count,
       }) => [
         title,
         category,
@@ -104,7 +97,6 @@ const seed = async (data) => {
         review_img_url,
         created_at,
         votes,
-        comment_count,
       ]
     )
   );
