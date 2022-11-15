@@ -21,7 +21,6 @@ describe("GET /api/categories", () => {
       .get("/api/categories")
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
         expect(body.length).toBe(4);
 
         body.forEach((category) => {
@@ -30,6 +29,36 @@ describe("GET /api/categories", () => {
             description: expect.any(String),
           });
         });
+      });
+  });
+});
+
+describe("GET /api/reviews/:review_id", () => {
+  test.only("GET 200 - responds with a review object with the correct properties", () => {
+    return request(app)
+      .get("/api/reviews/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          review_id: 1,
+          title: "Agricola",
+          category: "euro game",
+          designer: "Uwe Rosenberg",
+          owner: "mallionaire",
+          review_body: "Farmyard fun!",
+          review_img_url:
+            "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+          created_at: "2021-01-18T10:00:20.514Z",
+          votes: 1,
+        });
+      });
+  });
+  test("GET 400 - bad request, when the review_id is invalid", () => {
+    return request(app)
+      .get("/api/reviews/crumpet")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("bad request");
       });
   });
 });
