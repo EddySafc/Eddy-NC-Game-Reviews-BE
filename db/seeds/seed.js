@@ -107,7 +107,6 @@ const seed = async (data) => {
 
   const reviewIdLookup = createRef(reviewRows, "title", "review_id");
   const formattedCommentData = formatComments(commentData, reviewIdLookup);
-
   const insertCommentsQueryStr = format(
     "INSERT INTO comments (body, author, review_id, votes, created_at) VALUES %L RETURNING *;",
     formattedCommentData.map(

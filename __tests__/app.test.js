@@ -21,7 +21,6 @@ describe("GET /api/categories", () => {
       .get("/api/categories")
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
         expect(body.length).toBe(4);
 
         body.forEach((category) => {
@@ -30,6 +29,38 @@ describe("GET /api/categories", () => {
             description: expect.any(String),
           });
         });
+      });
+  });
+});
+
+describe("4. GET /api/reviews", () => {
+  test("returns array of review objects including comment count", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(13);
+        body.forEach((review) => {
+          expect(review).toMatchObject({
+            title: expect.any(String),
+            designer: expect.any(String),
+            owner: expect.any(String),
+            review_img_url: expect.any(String),
+            category: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("the reviews are returned in descending order", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeSortedBy("created_at", { descending: true });
+        expect(body[0].review_id).toBe(7);
       });
   });
 });
