@@ -7,7 +7,9 @@ exports.fetchCategories = () => {
 };
 
 exports.fetchReviews = () => {
-  return db.query("SELECT * FROM reviews;").then((result) => {
-    //console.log(result.rows);
-  });
+  return db
+    .query("SELECT * FROM reviews ORDER BY created_at DESC;")
+    .then((result) => {
+      return result.rows;
+    });
 };

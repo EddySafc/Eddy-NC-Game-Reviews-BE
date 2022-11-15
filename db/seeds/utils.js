@@ -1,5 +1,3 @@
-const { commentData, reviewData } = require("../data/test-data");
-
 exports.convertTimestampToDate = ({ created_at, ...otherProperties }) => {
   if (!created_at) return { ...otherProperties };
   return { created_at: new Date(created_at), ...otherProperties };
@@ -24,5 +22,16 @@ exports.formatComments = (comments, idLookup) => {
 };
 
 exports.addCommentCountToReviews = (reviewData, commentData) => {
-  reviewData.forEach((review) => (review.review_id = "change"));
+  if (!reviewData.length) {
+    return [];
+  }
+  const updatedReviews = reviewData.map((review) => {
+    const reviewCopy = { ...review };
+    reviewCopy.comment_count = 0;
+    return reviewCopy;
+  });
+  commentData.forEach(
+    (comment) => (updatedReviews[comment.review_id - 1].comment_count += 1)
+  );
+  return updatedReviews;
 };

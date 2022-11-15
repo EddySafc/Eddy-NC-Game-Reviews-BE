@@ -55,21 +55,16 @@ describe.only("4. GET /api/reviews", () => {
         });
       });
   });
+  test("the reviews are returned in descending order", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeSortedBy("created_at", { descending: true });
+        expect(body[0].review_id).toBe(7);
+      });
+  });
 });
-
-/*
-`reviews` array of review objects, each of which should have the following properties:
-- `owner` which is the `username` from the users table
-- `title`
-- `review_id`
-- `category`
-- `review_img_url` 
-- `created_at`
-- `votes`
-- `designer`
-- `comment_count` which is the total count of all the comments with this review_id - you should make use of queries to the database in order to achieve this.
-- the reviews should be sorted by date in descending order.
-*/
 
 describe("ERROR 404 - end point not found", () => {
   test("if the end point is not found a message saying link not found is returned", () => {

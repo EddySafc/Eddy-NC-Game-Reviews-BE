@@ -7,5 +7,7 @@ exports.getCategories = (req, res) => {
 };
 
 exports.getReviews = (req, res) => {
-  fetchReviews();
+  fetchReviews().then((reviews) => {
+    res.send(reviews);
+  });
 };

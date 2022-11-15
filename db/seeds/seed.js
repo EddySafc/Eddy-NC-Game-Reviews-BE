@@ -4,6 +4,7 @@ const {
   convertTimestampToDate,
   createRef,
   formatComments,
+  addCommentCountToReviews,
 } = require("./utils");
 
 const seed = async (data) => {
@@ -76,10 +77,14 @@ const seed = async (data) => {
   await Promise.all([categoriesPromise, usersPromise]);
 
   const formattedReviewData = reviewData.map(convertTimestampToDate);
+  const commentCountAddedFormattedReviewData = addCommentCountToReviews(
+    formattedReviewData,
+    commentData
+  );
 
   const insertReviewsQueryStr = format(
-    "INSERT INTO reviews (title, category, designer, owner, review_body, review_img_url, created_at, votes) VALUES %L RETURNING *;",
-    formattedReviewData.map(
+    "INSERT INTO reviews (title, category, designer, owner, review_body, review_img_url, created_at, votes, comment_count) VALUES %L RETURNING *;",
+    commentCountAddedFormattedReviewData.map(
       ({
         title,
         category,
@@ -89,6 +94,7 @@ const seed = async (data) => {
         review_img_url,
         created_at,
         votes,
+        comment_count,
       }) => [
         title,
         category,
@@ -98,6 +104,7 @@ const seed = async (data) => {
         review_img_url,
         created_at,
         votes,
+        comment_count,
       ]
     )
   );
@@ -108,7 +115,6 @@ const seed = async (data) => {
 
   const reviewIdLookup = createRef(reviewRows, "title", "review_id");
   const formattedCommentData = formatComments(commentData, reviewIdLookup);
-
   const insertCommentsQueryStr = format(
     "INSERT INTO comments (body, author, review_id, votes, created_at) VALUES %L RETURNING *;",
     formattedCommentData.map(
