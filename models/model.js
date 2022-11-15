@@ -1,6 +1,4 @@
 const db = require("../db/connection");
-const { forEach } = require("../db/data/test-data/comments");
-const comments = require("../db/data/test-data/comments");
 
 exports.fetchCategories = () => {
   return db.query("SELECT * FROM categories;").then((result) => {
