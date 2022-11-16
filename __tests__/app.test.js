@@ -65,7 +65,7 @@ describe("GET /api/reviews/:review_id", () => {
       .get("/api/reviews/1")
       .expect(200)
       .then(({ body }) => {
-        expect(body).toEqual({
+        expect(body).toMatchObject({
           review_id: 1,
           title: "Agricola",
           category: "euro game",
