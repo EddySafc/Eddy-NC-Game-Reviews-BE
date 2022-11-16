@@ -65,6 +65,44 @@ describe("4. GET /api/reviews", () => {
   });
 });
 
+describe.only("6. GET /api/reviews/:review_id/comments", () => {
+  test("should respond with an array of comments for the given review id with the correct properties - ordered by newest first", () => {
+    return request(app)
+      .get("/api/reviews/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(6);
+        body.forEach((item) => {
+          expect(item).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            review_id: expect.any(Number),
+          });
+        });
+        expect(body).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+});
+
+/*
+6. GET /api/reviews/:review_id/comments
+i
+Responds with:
+
+an array of comments for the given review_id of which each comment should have the following properties:
+- comment_id
+- votes
+- created_at
+- author which is the username from the users table
+- body
+- review_id
+
+comments should be served with the most recent comments first
+*/
+
 describe("ERROR 404 - end point not found", () => {
   test("if the end point is not found a message saying link not found is returned", () => {
     return request(app)

@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const comments = require("../db/data/test-data/comments");
 
 exports.fetchCategories = () => {
   return db.query("SELECT * FROM categories;").then((result) => {
@@ -14,4 +15,11 @@ exports.fetchReviews = () => {
     .then((result) => {
       return result.rows;
     });
+};
+
+exports.fetchReviewIdComments = (review_id) => {
+  console.log(review_id);
+  return db.query(`SELECT * FROM comments;`).then((result) => {
+    console.log(result.rows);
+  });
 };
