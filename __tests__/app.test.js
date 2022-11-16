@@ -97,6 +97,49 @@ describe("GET /api/reviews/:review_id", () => {
   });
 });
 
+describe("6. GET /api/reviews/:review_id/comments", () => {
+  test("should respond with an array of comments for the given review id with the correct properties - ordered by newest first", () => {
+    return request(app)
+      .get("/api/reviews/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        body.forEach((item) => {
+          expect(item).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            review_id: expect.any(Number),
+          });
+        });
+        expect(body).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("expect an empty array to return when there are no comments with the given review_id", () => {
+    return request(app)
+      .get("/api/reviews/6/comments")
+      .expect(200)
+      .then(({ body }) => expect(body).toEqual([]));
+  });
+  test("GET 400 - bad request, when the review_id is invalid", () => {
+    return request(app)
+      .get("/api/reviews/crumpet/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("GET 404 - id not found", () => {
+    return request(app)
+      .get("/api/reviews/500/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("id not found");
+      });
+  });
+});
+
 describe("ERROR 404 - end point not found", () => {
   test("if the end point is not found a message saying link not found is returned", () => {
     return request(app)
