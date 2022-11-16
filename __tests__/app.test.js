@@ -2,19 +2,16 @@ const app = require("../app");
 const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
-
 const {
   categoryData,
   commentData,
   reviewData,
   userData,
 } = require("../db/data/test-data/index");
-
 beforeEach(() => seed({ categoryData, commentData, reviewData, userData }));
 afterAll(() => {
   return db.end();
 });
-
 describe("GET /api/categories", () => {
   test("GET 200 - respond with the array of category objects", () => {
     return request(app)
@@ -22,7 +19,6 @@ describe("GET /api/categories", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.length).toBe(4);
-
         body.forEach((category) => {
           expect(category).toMatchObject({
             slug: expect.any(String),
@@ -32,7 +28,6 @@ describe("GET /api/categories", () => {
       });
   });
 });
-
 describe("4. GET /api/reviews", () => {
   test("returns array of review objects including comment count", () => {
     return request(app)
@@ -61,6 +56,43 @@ describe("4. GET /api/reviews", () => {
       .then(({ body }) => {
         expect(body).toBeSortedBy("created_at", { descending: true });
         expect(body[0].review_id).toBe(7);
+      });
+  });
+});
+describe("GET /api/reviews/:review_id", () => {
+  test("GET 200 - responds with a review object with the correct properties", () => {
+    return request(app)
+      .get("/api/reviews/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toMatchObject({
+          review_id: 1,
+          title: "Agricola",
+          category: "euro game",
+          designer: "Uwe Rosenberg",
+          owner: "mallionaire",
+          review_body: "Farmyard fun!",
+          review_img_url:
+            "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+          created_at: "2021-01-18T10:00:20.514Z",
+          votes: 1,
+        });
+      });
+  });
+  test("GET 400 - bad request, when the review_id is invalid", () => {
+    return request(app)
+      .get("/api/reviews/crumpet")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("GET 404 - id not found", () => {
+    return request(app)
+      .get("/api/reviews/500")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("id not found");
       });
   });
 });
@@ -107,22 +139,6 @@ describe("6. GET /api/reviews/:review_id/comments", () => {
       });
   });
 });
-
-/*
-6. GET /api/reviews/:review_id/comments
-i
-Responds with:
-
-an array of comments for the given review_id of which each comment should have the following properties:
-- comment_id
-- votes
-- created_at
-- author which is the username from the users table
-- body
-- review_id
-
-comments should be served with the most recent comments first
-*/
 
 describe("ERROR 404 - end point not found", () => {
   test("if the end point is not found a message saying link not found is returned", () => {
