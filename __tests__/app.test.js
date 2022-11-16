@@ -12,7 +12,7 @@ beforeEach(() => seed({ categoryData, commentData, reviewData, userData }));
 afterAll(() => {
   return db.end();
 });
-describe("GET /api/categories", () => {
+describe("3. GET /api/categories", () => {
   test("GET 200 - respond with the array of category objects", () => {
     return request(app)
       .get("/api/categories")
@@ -59,7 +59,7 @@ describe("4. GET /api/reviews", () => {
       });
   });
 });
-describe("GET /api/reviews/:review_id", () => {
+describe("5. GET /api/reviews/:review_id", () => {
   test("GET 200 - responds with a review object with the correct properties", () => {
     return request(app)
       .get("/api/reviews/1")
@@ -96,7 +96,6 @@ describe("GET /api/reviews/:review_id", () => {
       });
   });
 });
-
 describe("6. GET /api/reviews/:review_id/comments", () => {
   test("should respond with an array of comments for the given review id with the correct properties - ordered by newest first", () => {
     return request(app)
@@ -139,7 +138,6 @@ describe("6. GET /api/reviews/:review_id/comments", () => {
       });
   });
 });
-
 describe("ERROR 404 - end point not found", () => {
   test("if the end point is not found a message saying link not found is returned", () => {
     return request(app)
