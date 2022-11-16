@@ -59,17 +59,6 @@ describe("4. GET /api/reviews", () => {
       });
   });
 });
-describe("ERROR 404 - end point not found", () => {
-  test("if the end point is not found a message saying link not found is returned", () => {
-    return request(app)
-      .get("/sfjkbwkjdbwkjf")
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toEqual("link not found");
-      });
-  });
-});
-
 describe("GET /api/reviews/:review_id", () => {
   test("GET 200 - responds with a review object with the correct properties", () => {
     return request(app)
@@ -95,7 +84,26 @@ describe("GET /api/reviews/:review_id", () => {
       .get("/api/reviews/crumpet")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toEqual("bad request");
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("GET 404 - id not found", () => {
+    return request(app)
+      .get("/api/reviews/500")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("id not found");
+      });
+  });
+});
+
+describe("ERROR 404 - end point not found", () => {
+  test("if the end point is not found a message saying link not found is returned", () => {
+    return request(app)
+      .get("/sfjkbwkjdbwkjf")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("link not found");
       });
   });
 });

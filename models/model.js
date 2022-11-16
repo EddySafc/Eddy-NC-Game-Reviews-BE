@@ -1,4 +1,3 @@
-const { query } = require("../db/connection");
 const db = require("../db/connection");
 
 exports.fetchCategories = () => {
@@ -18,12 +17,20 @@ exports.fetchReviews = () => {
 };
 
 exports.fetchReviewById = (review_id) => {
-  console.log(typeof parseInt(review_id));
-  if (typeof review_id !== "number") {
-    return Promise.reject({ status: 400, msg: "bad request" });
-  } else {
-    return db.query("SELECT * FROM reviews;").then((result) => {
-      return result.rows[review_id - 1];
+  return db
+    .query(
+      `SELECT * 
+    FROM reviews 
+    WHERE review_id =$1;`,
+      [review_id]
+    )
+    .then((result) => {
+      const review = result.rows[0];
+      if (!review) {
+        return Promise.reject({ status: 404, msg: "id not found" });
+      } else return review;
+    })
+    .catch((err) => {
+      return Promise.reject(err);
     });
-  }
 };
