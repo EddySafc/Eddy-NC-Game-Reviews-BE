@@ -4,6 +4,7 @@ const {
   fetchReviewIdComments,
   fetchReviewById,
   updateReviewVotes,
+  provideReviewComment,
 } = require("../models/model");
 
 exports.getCategories = (req, res, next) => {
@@ -42,6 +43,18 @@ exports.getReviewIdComments = (req, res, next) => {
   fetchReviewIdComments(review_id)
     .then((result) => {
       res.send(result);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postReviewComment = (req, res, next) => {
+  const newComment = req.body;
+  const { review_id } = req.params;
+  provideReviewComment(review_id, newComment)
+    .then((comment) => {
+      res.status(201).send({ comment: comment });
     })
     .catch((err) => {
       next(err);
