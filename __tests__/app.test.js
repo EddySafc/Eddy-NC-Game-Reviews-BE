@@ -225,10 +225,20 @@ describe("8. PATCH /api/reviews/:review_id", () => {
   test("PATCH 400 - additional unwanted key in body", () => {
     return request(app)
       .patch("/api/reviews/2")
-      .send({ inc_votess: 7, something: "something" })
+      .send({ inc_votes: 7, something: "something" })
       .expect(201)
       .then(({ body }) => {
-        expect(body.msg).toBe("bad request");
+        expect(body.review).toMatchObject({
+          title: "Jenga",
+          designer: "Leslie Scott",
+          owner: "philippaclaire9",
+          review_img_url:
+            "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+          review_body: "Fiddly fun for all the family",
+          category: "dexterity",
+          created_at: expect.any(String),
+          votes: 12,
+        });
       });
   });
 });
