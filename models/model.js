@@ -57,3 +57,19 @@ exports.fetchReviewById = (review_id) => {
       return Promise.reject(err);
     });
 };
+
+exports.updateReviewVotes = (review_id, inc_votes) => {
+  console.log(review_id, inc_votes);
+
+  return db
+    .query(
+      `UPDATE reviews
+    SET votes = votes + $1
+    WHERE review_id = $2
+    RETURNING*;`,
+      [inc_votes, review_id]
+    )
+    .then((result) => {
+      return result.rows;
+    });
+};
