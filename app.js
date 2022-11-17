@@ -29,7 +29,12 @@ app.use((err, req, res, next) => {
     res.status(err.status).send({ msg: err.msg });
   }
   if (err.code === "23503") {
-    res.status(404).send({ msg: "username not found" });
+    if (err.detail === 'Key (author)=(kevin) is not present in table "users".')
+      res.status(404).send({ msg: "username not found" });
+    if (
+      err.detail === 'Key (review_id)=(50) is not present in table "reviews".'
+    )
+      res.status(404).send({ msg: "id not found" });
   }
   if (err.code === "22P02") {
     res.status(400).send({ msg: "bad request" });

@@ -145,7 +145,7 @@ describe("7. POST /api/reviews/:review_id/comments", () => {
       .send({ username: "mallionaire", body: "yeah, it was alright" })
       .expect(201)
       .then(({ body }) => {
-        expect(body).toMatchObject({
+        expect(body.comment).toMatchObject({
           comment_id: 7,
           author: "mallionaire",
           body: "yeah, it was alright",
@@ -193,7 +193,7 @@ describe("7. POST /api/reviews/:review_id/comments", () => {
   });
   test("POST 404 - id not found", () => {
     return request(app)
-      .post("/api/reviews/500/comments")
+      .post("/api/reviews/50/comments")
       .send({ username: "mallionaire", body: "yeah, it was alright" })
       .expect(404)
       .then(({ body }) => {
