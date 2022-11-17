@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const reviews = require("../db/data/test-data/reviews");
 
 exports.fetchCategories = () => {
   return db.query("SELECT * FROM categories;").then((result) => {
@@ -59,8 +60,6 @@ exports.fetchReviewById = (review_id) => {
 };
 
 exports.provideReviewComment = (review_id, newComment) => {
-  console.log(review_id, newComment);
-
   if (
     newComment.hasOwnProperty("username") === false ||
     newComment.hasOwnProperty("body") === false
@@ -68,23 +67,22 @@ exports.provideReviewComment = (review_id, newComment) => {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
 
-  db.query(
-    `INSERT INTO users
-  (username, name)
-  VALUES
-  ($1, $1)RETURNING*;`,
-    [newComment.username]
-  );
+  if (review_id > reviews.length) {
+    return Promise.reject({ status: 404, msg: "id not found" });
+  }
 
   return db
     .query(
       `INSERT INTO comments
   (body, review_id, author)
   VALUES
-  ($1, $2, (SELECT username FROM users WHERE username = $3))RETURNING*;`,
+  ($1, $2, $3)RETURNING*;`,
       [newComment.body, review_id, newComment.username]
     )
     .then((result) => {
       return result.rows[0];
+    })
+    .catch((err) => {
+      return Promise.reject(err);
     });
 };

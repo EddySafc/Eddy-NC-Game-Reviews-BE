@@ -142,12 +142,12 @@ describe("7. POST /api/reviews/:review_id/comments", () => {
   test("Request body should accept an object with the correct properties and respond with the posted comment", () => {
     return request(app)
       .post("/api/reviews/2/comments")
-      .send({ username: "big-mad-andy", body: "yeah, it was alright" })
+      .send({ username: "mallionaire", body: "yeah, it was alright" })
       .expect(201)
       .then(({ body }) => {
         expect(body).toMatchObject({
           comment_id: 7,
-          author: "big-mad-andy",
+          author: "mallionaire",
           body: "yeah, it was alright",
           created_at: expect.any(String),
           review_id: 2,
@@ -155,13 +155,49 @@ describe("7. POST /api/reviews/:review_id/comments", () => {
         });
       });
   });
-  test("POST 400 - the comment posted is missing required fields", () => {
+  test("404 - Username does not exist", () => {
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send({ username: "kevin", body: "yeah, it was alright" })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("username not found");
+      });
+  });
+  test("POST 400 - the comment posted is missing username", () => {
     return request(app)
       .post("/api/reviews/2/comments")
       .send({ body: "yeah, it was alright" })
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("bad request");
+      });
+  });
+  test("POST 400 - the comment posted is missing body", () => {
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send({ username: "gary" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("POST 400 - bad request, when the review_id is invalid", () => {
+    return request(app)
+      .post("/api/reviews/crumpet/comments")
+      .send({ username: "mallionaire", body: "yeah, it was alright" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("POST 404 - id not found", () => {
+    return request(app)
+      .post("/api/reviews/500/comments")
+      .send({ username: "mallionaire", body: "yeah, it was alright" })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("id not found");
       });
   });
 });
