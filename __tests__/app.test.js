@@ -200,6 +200,24 @@ describe("7. POST /api/reviews/:review_id/comments", () => {
         expect(body.msg).toBe("id not found");
       });
   });
+  test("key username is spelt incorrectly", () => {
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send({ usernamme: "mallionaire", body: "yeah, it was alright" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("key body is spelt incorrectly", () => {
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send({ username: "mallionaire", bodie: "yeah, it was alright" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
 });
 
 describe("ERROR 404 - end point not found", () => {
