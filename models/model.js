@@ -57,3 +57,26 @@ exports.fetchReviewById = (review_id) => {
       return Promise.reject(err);
     });
 };
+
+exports.provideReviewComment = (review_id, newComment) => {
+  console.log(review_id, newComment);
+
+  if (
+    newComment.hasOwnProperty("username") === false ||
+    newComment.hasOwnProperty("body") === false
+  ) {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
+
+  return db
+    .query(
+      `INSERT INTO comments
+  (body, review_id, author)
+  VALUES
+  ($1, $2, (SELECT username FROM users WHERE username = $3))RETURNING*;`,
+      [newComment.body, review_id, newComment.username]
+    )
+    .then((result) => {
+      return result.rows[0];
+    });
+};

@@ -138,6 +138,34 @@ describe("6. GET /api/reviews/:review_id/comments", () => {
       });
   });
 });
+describe.only("7. POST /api/reviews/:review_id/comments", () => {
+  test("Request body should accept an object with the correct properties and respond with the posted comment", () => {
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send({ username: "big-mad-andy", body: "yeah, it was alright" })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toMatchObject({
+          comment_id: 7,
+          author: "big-mad-andy",
+          body: "yeah, it was alright",
+          created_at: expect.any(String),
+          review_id: 2,
+          votes: 0,
+        });
+      });
+  });
+  test("POST 400 - the comment posted is missing required fields", () => {
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send({ body: "yeah, it was alright" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+});
+
 describe("ERROR 404 - end point not found", () => {
   test("if the end point is not found a message saying link not found is returned", () => {
     return request(app)
