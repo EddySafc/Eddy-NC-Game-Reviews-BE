@@ -53,7 +53,7 @@ exports.patchReviewVotes = (req, res, next) => {
   const { inc_votes } = req.body;
   updateReviewVotes(review_id, inc_votes)
     .then((result) => {
-      res.status(201).send(result[0]);
+      res.status(201).send({ review: result[0] });
     })
     .catch((err) => {
       next(err);

@@ -138,14 +138,14 @@ describe("6. GET /api/reviews/:review_id/comments", () => {
       });
   });
 });
-describe.only("8. PATCH /api/reviews/:review_id", () => {
-  test("increment the current reviews vote property by the amount provided and respond with the updated review", () => {
+describe("8. PATCH /api/reviews/:review_id", () => {
+  test("increment the current reviews vote property by the amount provided and respond with the updated review - when votes are positive", () => {
     return request(app)
       .patch("/api/reviews/2")
       .send({ inc_votes: 4 })
       .expect(201)
       .then(({ body }) => {
-        expect(body).toMatchObject({
+        expect(body.review).toMatchObject({
           title: "Jenga",
           designer: "Leslie Scott",
           owner: "philippaclaire9",
@@ -158,6 +158,25 @@ describe.only("8. PATCH /api/reviews/:review_id", () => {
         });
       });
   });
+  test("increment the current reviews vote property by the amount provided and respond with the updated review - when votes are negetive", () => {
+    return request(app)
+      .patch("/api/reviews/2")
+      .send({ inc_votes: -40 })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.review).toMatchObject({
+          title: "Jenga",
+          designer: "Leslie Scott",
+          owner: "philippaclaire9",
+          review_img_url:
+            "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+          review_body: "Fiddly fun for all the family",
+          category: "dexterity",
+          created_at: expect.any(String),
+          votes: -35,
+        });
+      });
+  });
   test("PATCH 400 - bad request, when the review_id is invalid", () => {
     return request(app)
       .patch("/api/reviews/crumpet")
@@ -167,7 +186,7 @@ describe.only("8. PATCH /api/reviews/:review_id", () => {
         expect(body.msg).toBe("bad request");
       });
   });
-  test.only("PATCH 404 - id not found", () => {
+  test("PATCH 404 - id not found", () => {
     return request(app)
       .patch("/api/reviews/500")
       .send({ inc_votes: 4 })
@@ -176,24 +195,34 @@ describe.only("8. PATCH /api/reviews/:review_id", () => {
         expect(body.msg).toBe("id not found");
       });
   });
+  test("PATCH 400 - bad request, missing fields", () => {
+    return request(app)
+      .patch("/api/reviews/2")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("PATCH 400 - bad request, incorrect data type value", () => {
+    return request(app)
+      .patch("/api/reviews/2")
+      .send({ inc_votes: "seven" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("PATCH 400 - bad request, incorrectly spelt key", () => {
+    return request(app)
+      .patch("/api/reviews/2")
+      .send({ inc_votess: 7 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
 });
-
-/*
-Request body accepts:
-
-- an object in the form `{ inc_votes: newVote }`
-
-- `newVote` will indicate how much the `votes` property in the database should be updated by
-e.g.
-
-`{ inc_votes : 1 }` would increment the current review's vote property by 1
-
-`{ inc_votes : -100 `} would decrement the current review's vote property by 100
-
-Responds with:
-
-- the updated review
-*/
 
 describe("ERROR 404 - end point not found", () => {
   test("if the end point is not found a message saying link not found is returned", () => {
