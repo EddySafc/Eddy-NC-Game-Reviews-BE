@@ -94,8 +94,5 @@ exports.updateReviewVotes = (review_id, inc_votes) => {
         return Promise.reject({ status: 404, msg: "id not found" });
       }
       return result.rows;
-    })
-    .catch((err) => {
-      return Promise.reject(err);
     });
 };

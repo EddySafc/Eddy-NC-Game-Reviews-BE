@@ -324,7 +324,7 @@ describe("8. PATCH /api/reviews/:review_id", () => {
         expect(body.msg).toBe("bad request");
       });
   });
-  test("PATCH 400 - additional unwanted key in body", () => {
+  test("PATCH 201 - additional unwanted key in body", () => {
     return request(app)
       .patch("/api/reviews/2")
       .send({ inc_votes: 7, something: "something" })
