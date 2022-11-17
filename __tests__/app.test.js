@@ -363,8 +363,16 @@ describe("9. GET /api/users", () => {
   });
 });
 
-describe("11. GET /api/reviews (queries)", () => {
-  test("should ", () => {});
+describe.only("11. GET /api/reviews (queries)", () => {
+  test("end point should be able to accept category query that filters the response to only the given category", () => {
+    return request
+      .agent(app)
+      .get("/api/reviews?category=euro game")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(1);
+      });
+  });
 });
 
 /*
