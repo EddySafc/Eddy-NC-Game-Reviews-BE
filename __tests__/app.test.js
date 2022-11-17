@@ -222,6 +222,15 @@ describe("8. PATCH /api/reviews/:review_id", () => {
         expect(body.msg).toBe("bad request");
       });
   });
+  test("PATCH 400 - additional unwanted key in body", () => {
+    return request(app)
+      .patch("/api/reviews/2")
+      .send({ inc_votess: 7, something: "something" })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
 });
 
 describe("ERROR 404 - end point not found", () => {
