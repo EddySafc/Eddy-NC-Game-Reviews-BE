@@ -57,6 +57,7 @@ exports.fetchReviewById = (review_id) => {
       return Promise.reject(err);
     });
 };
+
 exports.provideReviewComment = (review_id, newComment) => {
   if (
     newComment.hasOwnProperty("username") === false ||
