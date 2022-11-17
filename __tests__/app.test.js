@@ -60,7 +60,7 @@ describe("4. GET /api/reviews", () => {
   });
 });
 describe("5. GET /api/reviews/:review_id", () => {
-  test("GET 200 - responds with a review object with the correct properties", () => {
+  test.only("GET 200 - responds with a review object with the correct properties", () => {
     return request(app)
       .get("/api/reviews/1")
       .expect(200)
