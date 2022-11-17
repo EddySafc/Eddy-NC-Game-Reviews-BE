@@ -218,17 +218,24 @@ describe("7. POST /api/reviews/:review_id/comments", () => {
         expect(body.msg).toBe("bad request");
       });
   });
-  test("POST 400 - extra unwanted key in the body", () => {
+  test.only("POST 201 - extra unwanted key in the body", () => {
     return request(app)
       .post("/api/reviews/2/comments")
       .send({
         username: "mallionaire",
-        bodie: "yeah, it was alright",
+        body: "yeah, it was alright",
         something: "whatever",
       })
-      .expect(400)
+      .expect(201)
       .then(({ body }) => {
-        expect(body.msg).toBe("bad request");
+        expect(body.comment).toMatchObject({
+          comment_id: 7,
+          author: "mallionaire",
+          body: "yeah, it was alright",
+          created_at: expect.any(String),
+          review_id: 2,
+          votes: 0,
+        });
       });
   });
 });
