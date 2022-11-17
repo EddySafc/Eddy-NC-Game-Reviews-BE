@@ -218,7 +218,7 @@ describe("7. POST /api/reviews/:review_id/comments", () => {
         expect(body.msg).toBe("bad request");
       });
   });
-  test.only("POST 201 - extra unwanted key in the body", () => {
+  test("POST 201 - extra unwanted key in the body", () => {
     return request(app)
       .post("/api/reviews/2/comments")
       .send({
