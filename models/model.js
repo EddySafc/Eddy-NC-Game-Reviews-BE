@@ -66,11 +66,6 @@ exports.provideReviewComment = (review_id, newComment) => {
   ) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
-
-  // if (review_id > reviews.length) {
-  //   return Promise.reject({ status: 404, msg: "id not found" });
-  // }
-
   return db
     .query(
       `INSERT INTO comments
