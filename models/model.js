@@ -1,5 +1,4 @@
 const db = require("../db/connection");
-const reviews = require("../db/data/test-data/reviews");
 
 exports.fetchCategories = () => {
   return db.query("SELECT * FROM categories;").then((result) => {
@@ -58,7 +57,6 @@ exports.fetchReviewById = (review_id) => {
       return Promise.reject(err);
     });
 };
-
 exports.provideReviewComment = (review_id, newComment) => {
   if (
     newComment.hasOwnProperty("username") === false ||
@@ -79,5 +77,22 @@ exports.provideReviewComment = (review_id, newComment) => {
     })
     .catch((err) => {
       return Promise.reject(err);
+    });
+};
+
+exports.updateReviewVotes = (review_id, inc_votes) => {
+  return db
+    .query(
+      `UPDATE reviews
+    SET votes = votes + $1
+    WHERE review_id = $2
+    RETURNING*;`,
+      [inc_votes, review_id]
+    )
+    .then((result) => {
+      if (!result.rows[0]) {
+        return Promise.reject({ status: 404, msg: "id not found" });
+      }
+      return result.rows;
     });
 };
