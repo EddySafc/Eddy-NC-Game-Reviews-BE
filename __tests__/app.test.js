@@ -29,7 +29,7 @@ describe("3. GET /api/categories", () => {
   });
 });
 describe("4. GET /api/reviews", () => {
-  test("returns array of review objects including comment count", () => {
+  test("GET 200 - returns array of review objects including comment count", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
@@ -49,7 +49,7 @@ describe("4. GET /api/reviews", () => {
         });
       });
   });
-  test("the reviews are returned in descending order", () => {
+  test("GET 200 - the reviews are returned in descending order", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
@@ -97,7 +97,7 @@ describe("5. GET /api/reviews/:review_id", () => {
   });
 });
 describe("6. GET /api/reviews/:review_id/comments", () => {
-  test("should respond with an array of comments for the given review id with the correct properties - ordered by newest first", () => {
+  test("GET 200 - should respond with an array of comments for the given review id with the correct properties - ordered by newest first", () => {
     return request(app)
       .get("/api/reviews/3/comments")
       .expect(200)
@@ -115,7 +115,7 @@ describe("6. GET /api/reviews/:review_id/comments", () => {
         expect(body).toBeSortedBy("created_at", { descending: true });
       });
   });
-  test("expect an empty array to return when there are no comments with the given review_id", () => {
+  test("GET 200 - expect an empty array to return when there are no comments with the given review_id", () => {
     return request(app)
       .get("/api/reviews/6/comments")
       .expect(200)
@@ -139,7 +139,7 @@ describe("6. GET /api/reviews/:review_id/comments", () => {
   });
 });
 describe("7. POST /api/reviews/:review_id/comments", () => {
-  test("Request body should accept an object with the correct properties and respond with the posted comment", () => {
+  test("POST 201 -Request body should accept an object with the correct properties and respond with the posted comment", () => {
     return request(app)
       .post("/api/reviews/2/comments")
       .send({ username: "mallionaire", body: "yeah, it was alright" })
@@ -155,7 +155,7 @@ describe("7. POST /api/reviews/:review_id/comments", () => {
         });
       });
   });
-  test("404 - Username does not exist", () => {
+  test("POST 404 - Username does not exist", () => {
     return request(app)
       .post("/api/reviews/2/comments")
       .send({ username: "kevin", body: "yeah, it was alright" })
@@ -193,14 +193,14 @@ describe("7. POST /api/reviews/:review_id/comments", () => {
   });
   test("POST 404 - id not found", () => {
     return request(app)
-      .post("/api/reviews/50/comments")
+      .post("/api/reviews/60/comments")
       .send({ username: "mallionaire", body: "yeah, it was alright" })
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("id not found");
       });
   });
-  test("key username is spelt incorrectly", () => {
+  test("POST 400 - key username is spelt incorrectly", () => {
     return request(app)
       .post("/api/reviews/2/comments")
       .send({ usernamme: "mallionaire", body: "yeah, it was alright" })
@@ -209,7 +209,7 @@ describe("7. POST /api/reviews/:review_id/comments", () => {
         expect(body.msg).toBe("bad request");
       });
   });
-  test("key body is spelt incorrectly", () => {
+  test("POST 400 - key body is spelt incorrectly", () => {
     return request(app)
       .post("/api/reviews/2/comments")
       .send({ username: "mallionaire", bodie: "yeah, it was alright" })
@@ -218,10 +218,23 @@ describe("7. POST /api/reviews/:review_id/comments", () => {
         expect(body.msg).toBe("bad request");
       });
   });
+  test("POST 400 - extra unwanted key in the body", () => {
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send({
+        username: "mallionaire",
+        bodie: "yeah, it was alright",
+        something: "whatever",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
 });
 
 describe("ERROR 404 - end point not found", () => {
-  test("if the end point is not found a message saying link not found is returned", () => {
+  test("ERROR 404 -if the end point is not found a message saying link not found is returned", () => {
     return request(app)
       .get("/sfjkbwkjdbwkjf")
       .expect(404)
