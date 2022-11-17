@@ -138,7 +138,7 @@ describe("6. GET /api/reviews/:review_id/comments", () => {
       });
   });
 });
-describe.only("7. POST /api/reviews/:review_id/comments", () => {
+describe("7. POST /api/reviews/:review_id/comments", () => {
   test("Request body should accept an object with the correct properties and respond with the posted comment", () => {
     return request(app)
       .post("/api/reviews/2/comments")

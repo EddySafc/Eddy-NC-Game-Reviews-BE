@@ -68,6 +68,14 @@ exports.provideReviewComment = (review_id, newComment) => {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
 
+  db.query(
+    `INSERT INTO users
+  (username, name)
+  VALUES
+  ($1, $1)RETURNING*;`,
+    [newComment.username]
+  );
+
   return db
     .query(
       `INSERT INTO comments
