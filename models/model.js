@@ -58,6 +58,12 @@ exports.fetchReviewById = (review_id) => {
     });
 };
 
+exports.fetchUsers = () => {
+  return db.query(`SELECT * FROM users;`).then((users) => {
+    return users.rows;
+  });
+};
+
 exports.provideReviewComment = (review_id, newComment) => {
   if (
     newComment.hasOwnProperty("username") === false ||

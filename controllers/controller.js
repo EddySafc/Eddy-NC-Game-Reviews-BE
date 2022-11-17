@@ -3,6 +3,7 @@ const {
   fetchReviews,
   fetchReviewIdComments,
   fetchReviewById,
+  fetchUsers,
   updateReviewVotes,
   provideReviewComment,
 } = require("../models/model");
@@ -47,6 +48,12 @@ exports.getReviewIdComments = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.getUsers = (req, res, next) => {
+  fetchUsers().then((users) => {
+    res.send({ users: users });
+  });
 };
 
 exports.postReviewComment = (req, res, next) => {
