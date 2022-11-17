@@ -345,7 +345,7 @@ describe("8. PATCH /api/reviews/:review_id", () => {
   });
 });
 
-describe.only("9. GET /api/users", () => {
+describe("9. GET /api/users", () => {
   test("should respond with an array of objects with the correct properties", () => {
     return request(app)
       .get("/api/users")
