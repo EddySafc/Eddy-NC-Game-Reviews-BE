@@ -51,7 +51,11 @@ exports.getReviewIdComments = (req, res, next) => {
 exports.patchReviewVotes = (req, res, next) => {
   const { review_id } = req.params;
   const { inc_votes } = req.body;
-  updateReviewVotes(review_id, inc_votes).then((result) => {
-    res.status(201).send(result[0]);
-  });
+  updateReviewVotes(review_id, inc_votes)
+    .then((result) => {
+      res.status(201).send(result[0]);
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

@@ -60,6 +60,11 @@ exports.fetchReviewById = (review_id) => {
 
 exports.updateReviewVotes = (review_id, inc_votes) => {
   console.log(review_id, inc_votes);
+  console.log(reviews.length);
+
+  if (review_id > reviews.length) {
+    return Promise.reject({ status: 404, msg: "id not found" });
+  }
 
   return db
     .query(
@@ -71,5 +76,8 @@ exports.updateReviewVotes = (review_id, inc_votes) => {
     )
     .then((result) => {
       return result.rows;
+    })
+    .catch((err) => {
+      return Promise.reject(err);
     });
 };

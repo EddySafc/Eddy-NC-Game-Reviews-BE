@@ -158,6 +158,24 @@ describe.only("8. PATCH /api/reviews/:review_id", () => {
         });
       });
   });
+  test("PATCH 400 - bad request, when the review_id is invalid", () => {
+    return request(app)
+      .patch("/api/reviews/crumpet")
+      .send({ inc_votes: 4 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test.only("PATCH 404 - id not found", () => {
+    return request(app)
+      .patch("/api/reviews/500")
+      .send({ inc_votes: 4 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("id not found");
+      });
+  });
 });
 
 /*
