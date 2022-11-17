@@ -30,9 +30,16 @@ exports.getReviews = (req, res, next) => {
 
 exports.getReviewsById = (req, res, next) => {
   const { review_id } = req.params;
-  fetchReviewById(review_id)
+  fetchReviews()
     .then((result) => {
-      res.send(result);
+      result.forEach((review) => {
+        if (review.review_id === parseInt(review_id)) {
+          res.send(review);
+        }
+      });
+      if (parseInt(review_id) == review_id) {
+        return Promise.reject({ status: 404, msg: "id not found" });
+      } else return Promise.reject({ status: 400, msg: "bad request" });
     })
     .catch((err) => {
       next(err);
