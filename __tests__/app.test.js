@@ -363,6 +363,21 @@ describe("9. GET /api/users", () => {
   });
 });
 
+describe("11. GET /api/reviews (queries)", () => {
+  test("should ", () => {});
+});
+
+/*
+11. GET /api/reviews (queries)
+**FEATURE REQUEST**
+The end point should also accept the following queries:
+
+- `category`, which selects the reviews by the category value specified in the query. If the query is omitted the endpoint should respond with all reviews. 
+- `sort_by`, which sorts the articles by any valid column (defaults to date)
+- `order`, which can be set to `asc` or `desc` for ascending or descending (defaults to descending)
+
+*/
+
 describe("ERROR 404 - end point not found", () => {
   test("if the end point is not found a message saying link not found is returned", () => {
     return request(app)
