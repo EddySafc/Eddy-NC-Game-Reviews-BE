@@ -389,7 +389,7 @@ describe("11. GET /api/reviews (queries)", () => {
             designer: expect.any(String),
             owner: expect.any(String),
             review_img_url: expect.any(String),
-            category: expect.any(String),
+            category: "euro game",
             created_at: expect.any(String),
             votes: expect.any(Number),
             comment_count: expect.any(String),
@@ -402,6 +402,7 @@ describe("11. GET /api/reviews (queries)", () => {
       .get("/api/reviews?sort_by=votes")
       .expect(200)
       .then(({ body }) => {
+        expect(body).toBeSortedBy("votes", { descending: true });
         expect(body[0].review_id).toBe(12);
       });
   });
@@ -410,6 +411,7 @@ describe("11. GET /api/reviews (queries)", () => {
       .get("/api/reviews?order=ASC")
       .expect(200)
       .then(({ body }) => {
+        expect(body).toBeSortedBy("created_at", { ascending: true });
         expect(body[0].review_id).toBe(13);
       });
   });
@@ -419,8 +421,7 @@ describe("11. GET /api/reviews (queries)", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.length).toBe(11);
-        expect(body[0].review_id).toBe(3);
-        expect(body[0].review_id).toBe(3);
+        expect(body).toBeSortedBy("review_id", { ascending: true });
       });
   });
   test("GET 404 - category value does not exist", () => {
