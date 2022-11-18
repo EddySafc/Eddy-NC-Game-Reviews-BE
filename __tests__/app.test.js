@@ -363,6 +363,19 @@ describe("9. GET /api/users", () => {
   });
 });
 
+describe("10. GET /api/reviews/:review_id (comment count)", () => {
+  test("GET 200 - should now include a comment count", () => {
+    return request(app)
+      .get("/api/reviews/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toMatchObject({
+          comment_count: "0",
+        });
+      });
+  });
+});
+
 describe("ERROR 404 - end point not found", () => {
   test("if the end point is not found a message saying link not found is returned", () => {
     return request(app)
