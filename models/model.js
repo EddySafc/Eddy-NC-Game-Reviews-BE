@@ -36,7 +36,6 @@ exports.fetchReviewById = (review_id) => {
       [review_id]
     )
     .then((result) => {
-      console.log(result.rows);
       const review = result.rows[0];
       if (!review) {
         return Promise.reject({ status: 404, msg: "id not found" });
