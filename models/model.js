@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { checkCategoryExists } = require("../db/seeds/utils");
 
 exports.fetchCategories = () => {
   return db.query("SELECT * FROM categories;").then((result) => {
@@ -44,12 +45,15 @@ ON comments.review_id = reviews.review_id`;
   return db
     .query(queryString, queryValues)
     .then((result) => {
-      if (!result.rows[0]) {
-        return Promise.reject({
-          status: 404,
-          msg: `category does not exist`,
-        });
-      } else return result.rows;
+      if (result.rows[0]) {
+        return result.rows;
+      }
+      if (query.category) {
+        return checkCategoryExists(query.category);
+      }
+    })
+    .then((result) => {
+      return result;
     })
     .catch((err) => {
       return Promise.reject(err);

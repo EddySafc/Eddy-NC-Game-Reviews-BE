@@ -456,6 +456,14 @@ describe("11. GET /api/reviews (queries)", () => {
         expect(body.msg).toBe("query name not found");
       });
   });
+  test("GET 200 - category exists on db but does not have any reviews returns an empty array", () => {
+    return request(app)
+      .get("/api/reviews?category=children's games")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual([]);
+      });
+  });
 });
 
 describe("ERROR 404 - end point not found", () => {
