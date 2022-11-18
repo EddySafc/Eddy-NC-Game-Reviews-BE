@@ -19,7 +19,8 @@ exports.getCategories = (req, res, next) => {
 };
 
 exports.getReviews = (req, res, next) => {
-  fetchReviews()
+  const query = req.query;
+  fetchReviews(query)
     .then((reviews) => {
       res.send(reviews);
     })

@@ -44,6 +44,12 @@ app.use((err, req, res, next) => {
   if (err.code === "22P02" || err.code === "23502") {
     res.status(400).send({ msg: "bad request" });
   }
+  if (err.code === "42703") {
+    res.status(404).send({ msg: "category does not exist" });
+  }
+  if (err.code === "42601") {
+    res.status(400).send({ msg: "order invalid" });
+  }
 });
 
 module.exports = app;

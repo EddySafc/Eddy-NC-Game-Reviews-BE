@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { checkCategoryExists } = require("../db/seeds/utils");
 
 exports.fetchCategories = () => {
   return db.query("SELECT * FROM categories;").then((result) => {
@@ -6,19 +7,56 @@ exports.fetchCategories = () => {
   });
 };
 
-exports.fetchReviews = () => {
+exports.fetchReviews = (query) => {
+  if (
+    Object.keys(query).length !== 0 &&
+    !query.category &&
+    !query.sort_by &&
+    !query.order
+  ) {
+    return Promise.reject({ status: 404, msg: "query name not found" });
+  }
+
+  let queryString = `SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.comment_id) 
+AS comment_count 
+FROM reviews 
+LEFT JOIN comments 
+ON comments.review_id = reviews.review_id`;
+
+  const queryValues = [];
+
+  if (query.category) {
+    queryString += " WHERE category = $1";
+    queryValues.push(query.category);
+  }
+
+  queryString += " GROUP BY reviews.review_id";
+
+  if (query.sort_by) {
+    queryString += ` ORDER BY ${query.sort_by}`;
+  } else queryString += " ORDER BY reviews.created_at";
+
+  if (query.order) {
+    queryString += ` ${query.order}`;
+  } else queryString += " DESC";
+
+  queryString += ";";
+
   return db
-    .query(
-      `SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.comment_id) 
-      AS comment_count 
-      FROM reviews 
-      LEFT JOIN comments 
-      ON comments.review_id = reviews.review_id 
-      GROUP BY reviews.review_id 
-      ORDER BY reviews.created_at DESC;`
-    )
+    .query(queryString, queryValues)
     .then((result) => {
-      return result.rows;
+      if (result.rows[0]) {
+        return result.rows;
+      }
+      if (query.category) {
+        return checkCategoryExists(query.category);
+      }
+    })
+    .then((result) => {
+      return result;
+    })
+    .catch((err) => {
+      return Promise.reject(err);
     });
 };
 
@@ -30,7 +68,7 @@ exports.fetchReviewById = (review_id) => {
       FROM reviews 
       LEFT JOIN comments 
       ON comments.review_id = reviews.review_id 
-      WHERE reviews.review_id = $1
+      WHERE reviews.review_id = $1 
       GROUP BY reviews.review_id; 
       `,
       [review_id]
