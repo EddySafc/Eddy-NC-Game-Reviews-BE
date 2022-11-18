@@ -363,28 +363,99 @@ describe("9. GET /api/users", () => {
   });
 });
 
-describe.only("11. GET /api/reviews (queries)", () => {
-  test("end point should be able to accept category query that filters the response to only the given category", () => {
-    return request
-      .agent(app)
-      .get("/api/reviews?category=euro game")
+describe("10. GET /api/reviews/:review_id (comment count)", () => {
+  test("GET 200 - should now include a comment count", () => {
+    return request(app)
+      .get("/api/reviews/1")
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).toBe(1);
+        expect(body).toMatchObject({
+          comment_count: "0",
+        });
       });
   });
 });
 
-/*
-11. GET /api/reviews (queries)
-**FEATURE REQUEST**
-The end point should also accept the following queries:
-
-- `category`, which selects the reviews by the category value specified in the query. If the query is omitted the endpoint should respond with all reviews. 
-- `sort_by`, which sorts the articles by any valid column (defaults to date)
-- `order`, which can be set to `asc` or `desc` for ascending or descending (defaults to descending)
-
-*/
+describe("11. GET /api/reviews (queries)", () => {
+  test("end point should be able to accept category query that filters the response to only the given category", () => {
+    return request(app)
+      .get("/api/reviews?category=euro game")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(1);
+        body.forEach((review) => {
+          expect(review).toMatchObject({
+            title: expect.any(String),
+            designer: expect.any(String),
+            owner: expect.any(String),
+            review_img_url: expect.any(String),
+            category: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("end point should be able to accept category query that filters the response to only the given sort_by", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=votes")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body[0].review_id).toBe(12);
+      });
+  });
+  test("end point should be able to accept category query that filters the response to only the given order", () => {
+    return request(app)
+      .get("/api/reviews?order=ASC")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body[0].review_id).toBe(13);
+      });
+  });
+  test("end point should be able to accept category query that filters the response to when given all three queries", () => {
+    return request(app)
+      .get("/api/reviews?order=ASC&sort_by=review_id&category=social deduction")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(11);
+        expect(body[0].review_id).toBe(3);
+        expect(body[0].review_id).toBe(3);
+      });
+  });
+  test("GET 404 - category value does not exist", () => {
+    return request(app)
+      .get("/api/reviews?category=quiz")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("category does not exist");
+      });
+  });
+  test("GET 400 - sort_by category value does not exist", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=weight")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("category does not exist");
+      });
+  });
+  test("GET 400 - order value is invalid", () => {
+    return request(app)
+      .get("/api/reviews?order=MID")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("order invalid");
+      });
+  });
+  test("GET 404 - name of query is not found", () => {
+    return request(app)
+      .get("/api/reviews?orrder=ASC")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("query name not found");
+      });
+  });
+});
 
 describe("ERROR 404 - end point not found", () => {
   test("if the end point is not found a message saying link not found is returned", () => {

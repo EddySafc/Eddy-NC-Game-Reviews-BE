@@ -7,24 +7,77 @@ exports.fetchCategories = () => {
 };
 
 exports.fetchReviews = (query) => {
-  console.log(query);
-  if (query.hasOwnProperty(category)) {
-  } else if (query.hasOwnProperty(sort_by)) {
-  } else if (query.hasOwnProperty(order)) {
-  } else
-    return db
-      .query(
-        `SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.comment_id) 
+  if (
+    Object.keys(query).length !== 0 &&
+    !query.category &&
+    !query.sort_by &&
+    !query.order
+  ) {
+    return Promise.reject({ status: 404, msg: "query name not found" });
+  }
+
+  let queryString = `SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.comment_id) 
+AS comment_count 
+FROM reviews 
+LEFT JOIN comments 
+ON comments.review_id = reviews.review_id`;
+
+  const queryValues = [];
+
+  if (query.category) {
+    queryString += " WHERE category = $1";
+    queryValues.push(query.category);
+  }
+
+  queryString += " GROUP BY reviews.review_id";
+
+  if (query.sort_by) {
+    queryString += ` ORDER BY ${query.sort_by}`;
+  } else queryString += " ORDER BY reviews.created_at";
+
+  if (query.order) {
+    queryString += ` ${query.order}`;
+  } else queryString += " DESC";
+
+  queryString += ";";
+
+  return db
+    .query(queryString, queryValues)
+    .then((result) => {
+      if (!result.rows[0]) {
+        return Promise.reject({
+          status: 404,
+          msg: `category does not exist`,
+        });
+      } else return result.rows;
+    })
+    .catch((err) => {
+      return Promise.reject(err);
+    });
+};
+
+exports.fetchReviewById = (review_id) => {
+  return db
+    .query(
+      `SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at,review_body, reviews.votes, designer, COUNT(comments.comment_id) 
       AS comment_count 
       FROM reviews 
       LEFT JOIN comments 
       ON comments.review_id = reviews.review_id 
-      GROUP BY reviews.review_id 
-      ORDER BY reviews.created_at DESC;`
-      )
-      .then((result) => {
-        return result.rows;
-      });
+      WHERE reviews.review_id = $1 
+      GROUP BY reviews.review_id; 
+      `,
+      [review_id]
+    )
+    .then((result) => {
+      const review = result.rows[0];
+      if (!review) {
+        return Promise.reject({ status: 404, msg: "id not found" });
+      } else return review;
+    })
+    .catch((err) => {
+      return Promise.reject(err);
+    });
 };
 
 exports.fetchReviewIdComments = (review_id) => {
@@ -47,25 +100,6 @@ exports.fetchReviewIdComments = (review_id) => {
             } else return result.rows;
           });
       } else return result.rows;
-    });
-};
-
-exports.fetchReviewById = (review_id) => {
-  return db
-    .query(
-      `SELECT * 
-    FROM reviews 
-    WHERE review_id =$1;`,
-      [review_id]
-    )
-    .then((result) => {
-      const review = result.rows[0];
-      if (!review) {
-        return Promise.reject({ status: 404, msg: "id not found" });
-      } else return review;
-    })
-    .catch((err) => {
-      return Promise.reject(err);
     });
 };
 
