@@ -1,7 +1,6 @@
 const cors = require("cors");
 const express = require("express");
 const app = express();
-app.use(cors());
 const {
   getCategories,
   getReviews,
@@ -12,6 +11,7 @@ const {
   patchReviewVotes,
 } = require("./controllers/controller.js");
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/api/categories", getCategories);
