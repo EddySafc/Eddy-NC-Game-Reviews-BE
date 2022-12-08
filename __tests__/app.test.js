@@ -466,6 +466,28 @@ describe("11. GET /api/reviews (queries)", () => {
   });
 });
 
+describe("12. DELETE /api/comments/:comment_id", () => {
+  test("should delete the given comment by comment_id and respond with 204 and no content", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  test("GET 400 - bad request, when the comment_id is invalid", () => {
+    return request(app)
+      .delete("/api/comments/crumpet")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("GET 404 - id not found", () => {
+    return request(app)
+      .delete("/api/comments/500")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("id not found");
+      });
+  });
+});
+
 describe("ERROR 404 - end point not found", () => {
   test("if the end point is not found a message saying link not found is returned", () => {
     return request(app)

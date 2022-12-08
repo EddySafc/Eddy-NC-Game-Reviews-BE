@@ -9,6 +9,7 @@ const {
   getUsers,
   postReviewComment,
   patchReviewVotes,
+  deleteCommentById,
 } = require("./controllers/controller.js");
 
 app.use(cors());
@@ -27,6 +28,8 @@ app.get("/api/users", getUsers);
 app.post("/api/reviews/:review_id/comments", postReviewComment);
 
 app.patch("/api/reviews/:review_id", patchReviewVotes);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.get("/*", (req, res) => {
   res.status(404).send({ msg: "link not found" });
