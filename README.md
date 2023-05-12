@@ -39,7 +39,7 @@ To clone you must first:
 - Create the environment variables for accessing the DATABASE
 
   - First create 2 files one named `.env.test` and another named `.env.development`.
-  - Second populate these files with `PGDATABASE=nc_news_test` for test and `PGDATABASE=nc_news` for development (Reference .env-example for structure).
+  - Second populate these files with `PGDATABASE=nc_games_test` for test and `PGDATABASE=nc_games` for development (Reference .env-example for structure).
 
     This will allow you to test the functionality of the API with a much smaller database saving you time.
 
