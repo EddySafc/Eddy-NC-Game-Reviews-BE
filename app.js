@@ -11,7 +11,7 @@ const {
   patchReviewVotes,
   deleteCommentById,
 } = require("./controllers/controller.js");
-const { getEndpointsDescription } = require("./endpoints");
+const { getEndpointsDescription } = require("./endpoints.js");
 
 app.use(cors());
 app.use(express.json());
