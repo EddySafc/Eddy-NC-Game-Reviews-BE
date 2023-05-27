@@ -18,7 +18,7 @@ You can **delete**: Comments.
 
 <https://wandering-pink-gloves.cyclic.app/>
 
-# Set-up for self-hosting.
+# Set-up for self-hosting
 
 To begin using this API hosted on your own machine you must first, **Clone** this respository.
 
